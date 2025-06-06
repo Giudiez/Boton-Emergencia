@@ -13,40 +13,95 @@
       margin-top: 100px;
       background-color: #f8f8f8;
     }
+
     button {
-      font-size: 24px;
-      padding: 20px 40px;
-      background-color: #d32f2f;
+      font-size: 20px;
+      padding: 15px 30px;
       color: white;
       border: none;
       border-radius: 12px;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      margin: 10px;
+      transition: background-color 0.2s;
     }
-    button:active {
-      background-color: #b71c1c;
+
+    .btn-rojo { background-color: #d32f2f; }
+    .btn-rojo:active { background-color: #b71c1c; }
+
+    .btn-verde { background-color: #388e3c; }
+    .btn-verde:active { background-color: #2e7d32; }
+
+    .btn-azul { background-color: #1976d2; }
+    .btn-azul:active { background-color: #1565c0; }
+
+    .btn-naranja { background-color: #f57c00; }
+    .btn-naranja:active { background-color: #ef6c00; }
+
+    .btn-morado { background-color: #7b1fa2; }
+    .btn-morado:active { background-color: #6a1b9a; }
+
+    #subMenu {
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <h1>Botón de Emergencia</h1>
-  <button id="emergenciaBtn">🚨 Enviar Alerta</button>
+  <h1>Menu De Solicitudes</h1>
+
+  <div id="mainMenu">
+    <button class="btn-rojo" onclick="mostrarCategoria('emergencias')">🚨 Emergencias</button>
+    <button class="btn-azul" onclick="mostrarCategoria('pie')">👥 Equipo PIE</button>
+    <button class="btn-naranja" onclick="mostrarCategoria('admin')">🏫 Administración</button>
+  </div>
+
+  <div id="subMenu"></div>
 
   <script>
-    document.getElementById('emergenciaBtn').addEventListener('click', () => {
+    const numeros = ["56982595491"];
+
+    function enviarMensaje(mensajeTexto) {
       const sala = prompt('¿En qué sala está la emergencia?');
       if (!sala) return;
 
-      const mensaje = encodeURIComponent(`🚨 EMERGENCIA en sala ${sala}. Favor asistir.`);
-      const numeros = [
-        ""
-        
-      ];
+      const mensaje = encodeURIComponent(mensajeTexto.replace('{sala}', sala));
 
       numeros.forEach(numero => {
         window.open(`https://wa.me/${numero}?text=${mensaje}`, '_blank');
       });
-    });
+    }
+
+    function mostrarCategoria(categoria) {
+      const subMenu = document.getElementById('subMenu');
+      subMenu.innerHTML = ''; // Limpiar botones anteriores
+
+      let botones = [];
+
+      if (categoria === 'emergencias') {
+        botones = [
+          { texto: '🚨 Botón Pánico', tipo: '🚨 EMERGENCIA en sala {sala}. Favor asistir.', color: 'btn-rojo' },
+          { texto: '🩺 Emergencia Médica', tipo: '🩺 EMERGENCIA MÉDICA en sala {sala}. Se necesita asistencia urgente.', color: 'btn-verde' },
+          { texto: 'Solicitud Personal', tipo: 'Se solicita inspector en sala {sala}.', color: 'btn-morado' }
+        ];
+      } else if (categoria === 'pie') {
+        botones = [
+          { texto: '👥 Solicitar PIE', tipo: 'Se solicita asistencia del equipo PIE en sala {sala}.', color: 'btn-azul' }
+        ];
+      } else if (categoria === 'admin') {
+        botones = [
+          { texto: '🚗 Retiro de Estudiante', tipo: 'Solicitan RETIRO DE ESTUDIANTE desde sala {sala}.', color: 'btn-naranja' },
+          { texto: '🧹 Auxiliar', tipo: 'Se solicita apoyo de personal Auxiliar en la sala {sala}.', color: 'btn-verde' }
+        ];
+      }
+
+      botones.forEach(boton => {
+        const btn = document.createElement('button');
+        btn.textContent = boton.texto;
+        btn.classList.add(boton.color);
+        btn.onclick = () => enviarMensaje(boton.tipo);
+        subMenu.appendChild(btn);
+      });
+    }
 
     // Registrar Service Worker
     if ('serviceWorker' in navigator) {
