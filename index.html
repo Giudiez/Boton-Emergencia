@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Botón Emergencia PWA</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #f8f8f8;
+    }
+    button {
+      font-size: 24px;
+      padding: 20px 40px;
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    button:active {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Botón de Emergencia</h1>
+  <button id="emergenciaBtn">🚨 Enviar Alerta</button>
+
+  <script>
+    document.getElementById('emergenciaBtn').addEventListener('click', () => {
+      const sala = prompt('¿En qué sala está la emergencia?');
+      if (!sala) return;
+
+      const mensaje = encodeURIComponent(`🚨 EMERGENCIA en sala ${sala}. Favor asistir.`);
+      const numeros = [
+        "56911111111",
+        "56922222222",
+        "56933333333",
+        "56944444444",
+        "56955555555"
+      ];
+
+      numeros.forEach(numero => {
+        window.open(`https://wa.me/${numero}?text=${mensaje}`, '_blank');
+      });
+    });
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado'))
+        .catch(err => console.error('Error registrando Service Worker:', err));
+    }
+  </script>
+</body>
+</html>
